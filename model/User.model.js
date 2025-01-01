@@ -36,7 +36,9 @@ const UserSchema = mongoose.Schema({
     required: true
   },
   lastLogin: {
-    type: Date
+    type: Date,
+    default: Date.now
+    
   },
   gender: {
     type: String,

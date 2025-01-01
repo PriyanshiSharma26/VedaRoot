@@ -37,17 +37,17 @@ AdminRouter.post(
     }),
 
   // Custom Contact validation (without regex)
-  body("contact")
-    .notEmpty()
-    .withMessage("Contact is required")
-    .isNumeric()
-    .withMessage("Contact must contain only digits")
-    .isLength({ min: 10, max: 10 })
-    .withMessage("Contact number should be exactly 10 digits")
-    .custom((value) => {
-      // Additional logic for contact number can be added here, if needed
-      return true;
-    }),
+  // body("contact")
+  //   .notEmpty()
+  //   .withMessage("Contact is required")
+  //   .isNumeric()
+  //   .withMessage("Contact must contain only digits")
+  //   .isLength({ min: 10, max: 10 })
+  //   .withMessage("Contact number should be exactly 10 digits")
+  //   .custom((value) => {
+  //     // Additional logic for contact number can be added here, if needed
+  //     return true;
+  //   }),
 
   // Invoke the signup controller function after validation
   signUp

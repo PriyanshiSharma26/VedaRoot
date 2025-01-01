@@ -62,6 +62,19 @@ UserRouter.post(
 );
 
 
-UserRouter.post("/signin", signIn);
+UserRouter.post("/signin", 
+  
+
+  body("email", "Invalid email id").isEmail().normalizeEmail(),
+
+  // Password Validation: Check if password is provided
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long"),
+  
+  
+  signIn);
 
 export default UserRouter;

@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import connectToDatabase from "./db/dbConfig.js";
 import AdminRouter from "./routes/Admin.route.js";
 import UserRouter from "./routes/User.route.js";
+import DoctorRouter from "./routes/Doctor.route.js";
 const app = express();
 
 connectToDatabase()
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 
   app.use("/Admin",AdminRouter);
   app.use("/User",UserRouter)
+  app.use("/Doctor",DoctorRouter)
   // app.use("/category",CategoryRouter);
 
 

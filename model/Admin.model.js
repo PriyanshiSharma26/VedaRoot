@@ -17,6 +17,7 @@ const AdminSchema = mongoose.Schema({
     },
     lastLogin: {
         type: Date,
+        default: Date.now
         
     }
 });
