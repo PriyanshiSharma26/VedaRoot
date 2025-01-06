@@ -3,6 +3,10 @@ import { validationResult } from 'express-validator';
 import User from '../model/User.model.js'; 
 import jwt from "jsonwebtoken";
 
+
+
+//signup
+
 export const signUp = async (req, res) => {
     try {
         
@@ -52,6 +56,8 @@ export const signUp = async (req, res) => {
 
 
 
+//signin
+
 
 export const signIn = async (req, res) => {
     try {
@@ -92,3 +98,216 @@ const generateToken = (userId)=>{
     let token = jwt.sign({payload: userId},"fsdfsdrereioruxvxncnv");
     return token; 
  }
+
+
+
+//view Users
+
+
+ export const ViewUser = async (req, res) => {
+     try {
+         // Fetch all users
+         let users = await User.find().select('-password');
+ 
+         
+         if (users.length > 0) {
+             return res.status(200).json({ users });
+         } else {
+             return res.status(404).json({ error: "No users found" });
+         }
+     } 
+       catch(err) {
+
+         return res.status(500).json({ error: "Internal Server Error" });
+     }
+ };
+ 
+
+
+ // find user by id
+
+ export const ViewUserById=async (req,res)=>{
+    try{
+
+        let _id=req.params.id
+        let user=await User.findOne({_id})
+        if(user)
+        {
+            return res.status(200).json({user})
+        
+        }
+        else{
+            return res.status(404).json({error: "Requested resouce not available | id not found"});  
+        }
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({error: "Internal Server Error"});
+
+    }
+ }
+
+
+// get user by name
+
+
+ export const viewUserByName = async (req, res) => {
+    try {
+        console.log( req.params);  
+        let userName = req.params.userName; 
+        console.log(userName);  
+
+        
+        let user = await User.findOne({ userName: userName });
+
+        
+        if (user) {
+            return res.status(200).json({ user });
+        } else {
+            
+            return res.status(404).json({ error: "Requested resource not available | name not found" });
+        }
+    } catch (err) {
+        console.log(err);
+        
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+// update user
+
+
+
+export const UpdateUserProfile = async (req, res) => {
+    try {
+        
+        let userId = req.params.id;
+        let updateData = req.body;
+
+        
+        let user = await User.updateOne({ _id: userId }, { $set: updateData });
+
+        
+        if (user.modifiedCount === 0) {
+            return res.status(404).json({ error: "User not found or no changes made" });
+        }
+
+        return res.status(200).json({ message: "User profile updated successfully" });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+
+
+
+
+
+
+// export const ResetPassword = async (req, res) => {
+//     try {
+//         const { token } = req.params;  
+//         const { newPassword } = req.body;  
+
+        
+//         const JWT_SECRET = 'your_jwt_secret_key'; 
+
+        
+//         const decoded = jwt.verify(token, JWT_SECRET);
+//         const userId = decoded.userId;
+
+        
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+
+        
+//         const isSamePassword = await bcrypt.compare(newPassword, user.password);
+//         if (isSamePassword) {
+//             return res.status(400).json({ error: "New password cannot be the same as the current password" });
+//         }
+
+    
+//         const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        
+//         user.password = hashedPassword;
+//         await user.save();
+
+//         return res.status(200).json({ message: "Password updated successfully" });
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(400).json({ error: "Invalid or expired token" });
+//     }
+// };
+
+
+
+
+
+// export const ForgetPassword=async(req,res)=>{
+//     try{
+//         const userData=await User.findOne({email:req.body.email})
+
+//         if(userData)
+//         {
+
+//         }
+//         else{
+//             res.status(200).json({message:"email not  exists...."})
+//         }
+//     }
+//     catch(error)
+//     {
+//         res.state(400).json({error:"internal server error"})
+//     }
+// }
+
+
+
+
+// Reset Password - Validate token and update password
+
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;  
+        const { newPassword } = req.body; 
+        
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiry: { $gt: Date.now() },  
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid or expired token' });
+        }
+
+      
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        
+        user.password = hashedPassword;
+
+        
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiry = undefined;
+
+       
+        await user.save();
+
+       
+        res.status(200).json({ message: 'Password has been reset successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};

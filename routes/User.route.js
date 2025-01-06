@@ -1,6 +1,8 @@
 import express from "express";
-import { signUp, signIn } from "../controller/User.controller.js";
+import { signUp, signIn,ViewUser,ViewUserById ,viewUserByName,UpdateUserProfile} from "../controller/User.controller.js";
 import { body } from "express-validator";
+import { auth } from "../middleware/auth.js";
+
 
 const UserRouter = express.Router();
 
@@ -76,5 +78,11 @@ UserRouter.post("/signin",
   
   
   signIn);
+
+// http://localhost:3000/User/searchByUserName/Ram
+  UserRouter.get("/viewUser",auth,ViewUser)
+  UserRouter.get("/:id",ViewUserById)
+  UserRouter.get("/searchByUserName/:userName",viewUserByName)
+  UserRouter.put("/updateProfile/:id",UpdateUserProfile)
 
 export default UserRouter;
