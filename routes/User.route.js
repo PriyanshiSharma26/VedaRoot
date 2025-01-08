@@ -1,5 +1,5 @@
 import express from "express";
-import { signUp, signIn,ViewUser,ViewUserById ,viewUserByName,UpdateUserProfile} from "../controller/User.controller.js";
+import { signUp, signIn,ViewUser,ViewUserById ,viewUserByName,UpdateUserProfile,forgetPassword} from "../controller/User.controller.js";
 import { body } from "express-validator";
 import { auth } from "../middleware/auth.js";
 
@@ -84,5 +84,7 @@ UserRouter.post("/signin",
   UserRouter.get("/:id",ViewUserById)
   UserRouter.get("/searchByUserName/:userName",viewUserByName)
   UserRouter.put("/updateProfile/:id",UpdateUserProfile)
+  UserRouter.post("/forgetPassword",forgetPassword)
+
 
 export default UserRouter;

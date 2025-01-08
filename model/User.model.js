@@ -45,6 +45,11 @@ const UserSchema = mongoose.Schema({
     required: true,
     enum: ['Male', 'Female', 'Other'],
     set: (value) => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() // Normalizes input to 'Male', 'Female', 'Other'
+  },
+ token : {
+    type: String,
+    default: ""
+    
   }
 });
 

@@ -10,3 +10,6 @@ export const auth = async (request,response,next)=>{
     return response.status(401).json({error: "Bad request | Unauthorized user"});
   }
 }
+
+
+

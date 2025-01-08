@@ -2,6 +2,10 @@ import bcrypt from 'bcryptjs';
 import { validationResult } from 'express-validator';
 import User from '../model/User.model.js'; 
 import jwt from "jsonwebtoken";
+import nodemailer from 'nodemailer';
+import randomstring from 'randomstring';
+import sendMail from '../config/nodemailer.js';
+
 
 
 
@@ -276,38 +280,73 @@ export const UpdateUserProfile = async (req, res) => {
 // Reset Password - Validate token and update password
 
 
-export const resetPassword = async (req, res) => {
-    try {
-        const { token } = req.params;  
-        const { newPassword } = req.body; 
+// export const resetPassword = async (req, res) => {
+//     try {
+//         const { token } = req.params;  
+//         const { newPassword } = req.body; 
         
-        const user = await User.findOne({
-            resetPasswordToken: token,
-            resetPasswordExpiry: { $gt: Date.now() },  
-        });
+//         const user = await User.findOne({
+//             resetPasswordToken: token,
+//             resetPasswordExpiry: { $gt: Date.now() },  
+//         });
 
-        if (!user) {
-            return res.status(400).json({ error: 'Invalid or expired token' });
-        }
+//         if (!user) {
+//             return res.status(400).json({ error: 'Invalid or expired token' });
+//         }
 
       
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(newPassword, salt);
+//         const salt = await bcrypt.genSalt(10);
+//         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         
-        user.password = hashedPassword;
+//         user.password = hashedPassword;
 
         
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpiry = undefined;
+//         user.resetPasswordToken = undefined;
+//         user.resetPasswordExpiry = undefined;
 
        
-        await user.save();
+//         await user.save();
 
        
-        res.status(200).json({ message: 'Password has been reset successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+//         res.status(200).json({ message: 'Password has been reset successfully' });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+
+
+
+
+export const forgetPassword=async(req,res)=>{
+
+    try{
+        const email=req.body.email
+        const user=await User.findOne({email:email})
+        if(user)
+        {
+            const token=randomstring.generate()
+            const updateData=await User.updateOne({_id:user._id},{$set:{token:token}})
+
+            await sendMail(user.email,token)
+            res.status(200).send({success:true,message:"check email for reset password link"})
+
+        }
+        else{
+            return res.status(200).json({ error: "User with this email doesn't exists"});
+
+        }
+
     }
-};
+    
+    
+    catch(err) {
+                 console.error(err);
+             res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+    }
+
+
+
