@@ -3,7 +3,7 @@ import Category from  "../model/category.js";
 
 export const addCategories = (req,res,next) => {
 
-       console.log(req.body);
+       // console.log(req.body);
        
           
          Category.insertMany(req.body).then(result => {

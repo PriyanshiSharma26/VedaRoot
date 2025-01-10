@@ -2,6 +2,7 @@ import Category from "../model/category.js";
 import { Product } from "../model/product.js";
 
 // Add multiple products
+// add product
 export const addProducts = async (req, res, next) => {
   try {
     const products = req.body; // Assuming products are sent in an array

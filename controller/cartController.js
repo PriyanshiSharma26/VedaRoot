@@ -6,6 +6,7 @@ export  const addToCart = async (req,res,next) => {
 
        try {
 
+          // add to cart
                const { userId,productId, quantity} = req.body;
 
                 // const user = await User.findById(userId);
